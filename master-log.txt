@@ -1,0 +1,532 @@
+
+C:\polaris\k8\udemy\certified-kubernetes-administrator-course>vagrant ssh kubemaster
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 4.15.0-151-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Fri Jul 23 14:02:40 UTC 2021
+
+  System load:  0.0               Processes:             95
+  Usage of /:   2.8% of 38.71GB   Users logged in:       0
+  Memory usage: 6%                IP address for enp0s3: 10.0.2.15
+  Swap usage:   0%                IP address for enp0s8: 192.168.56.2
+
+
+0 updates can be applied immediately.
+
+New release '20.04.2 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+vagrant@kubemaster:~$ uname -a
+Linux kubemaster 4.15.0-151-generic #157-Ubuntu SMP Fri Jul 9 23:07:57 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
+vagrant@kubemaster:~$ uptime
+ 14:03:31 up 12 min,  1 user,  load average: 0.03, 0.01, 0.00
+vagrant@kubemaster:~$ logout
+Connection to 127.0.0.1 closed.
+
+C:\polaris\k8\udemy\certified-kubernetes-administrator-course>vagrant ssh kubenode01
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 4.15.0-151-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Fri Jul 23 14:04:26 UTC 2021
+
+  System load:  0.0               Processes:             94
+  Usage of /:   2.8% of 38.71GB   Users logged in:       0
+  Memory usage: 6%                IP address for enp0s3: 10.0.2.15
+  Swap usage:   0%                IP address for enp0s8: 192.168.56.3
+
+
+0 updates can be applied immediately.
+
+New release '20.04.2 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+vagrant@kubenode01:~$ logout
+Connection to 127.0.0.1 closed.
+
+C:\polaris\k8\udemy\certified-kubernetes-administrator-course>vagrant ssh kubemaster
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 4.15.0-151-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Fri Jul 23 14:04:53 UTC 2021
+
+  System load:  0.01              Processes:             97
+  Usage of /:   2.8% of 38.71GB   Users logged in:       0
+  Memory usage: 6%                IP address for enp0s3: 10.0.2.15
+  Swap usage:   0%                IP address for enp0s8: 192.168.56.2
+
+
+0 updates can be applied immediately.
+
+New release '20.04.2 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+Last login: Fri Jul 23 14:02:40 2021 from 10.0.2.2
+vagrant@kubemaster:~$ lsmod | grep br_netfilter
+vagrant@kubemaster:~$ sudo modprobe br_netfilter
+vagrant@kubemaster:~$ lsmod | grep br_netfilter
+\br_netfilter           24576  0
+bridge                155648  1 br_netfilter
+vagrant@kubemaster:~$ lsmod | grep br_netfilter
+br_netfilter           24576  0
+bridge                155648  1 br_netfilter
+vagrant@kubemaster:~$ cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+> br_netfilter
+> EOF
+t <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridgbr_netfilter
+e-nf-calvagrant@kubemaster:~$
+l-iptablvagrant@kubemaster:~$ cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+> net.bridge.bridge-nf-call-ip6tables = 1
+> net.bridge.bridge-nf-call-iptables = 1
+> EOF
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+vagrant@kubemaster:~$ sudo sysctl --system
+* Applying /etc/sysctl.d/10-console-messages.conf ...
+kernel.printk = 4 4 1 7
+* Applying /etc/sysctl.d/10-ipv6-privacy.conf ...
+net.ipv6.conf.all.use_tempaddr = 2
+net.ipv6.conf.default.use_tempaddr = 2
+* Applying /etc/sysctl.d/10-kernel-hardening.conf ...
+kernel.kptr_restrict = 1
+* Applying /etc/sysctl.d/10-link-restrictions.conf ...
+fs.protected_hardlinks = 1
+fs.protected_symlinks = 1
+* Applying /etc/sysctl.d/10-lxd-inotify.conf ...
+fs.inotify.max_user_instances = 1024
+* Applying /etc/sysctl.d/10-magic-sysrq.conf ...
+kernel.sysrq = 176
+* Applying /etc/sysctl.d/10-network-security.conf ...
+net.ipv4.conf.default.rp_filter = 1
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.tcp_syncookies = 1
+* Applying /etc/sysctl.d/10-ptrace.conf ...
+kernel.yama.ptrace_scope = 1
+* Applying /etc/sysctl.d/10-zeropage.conf ...
+vm.mmap_min_addr = 65536
+* Applying /usr/lib/sysctl.d/50-default.conf ...
+net.ipv4.conf.all.promote_secondaries = 1
+net.core.default_qdisc = fq_codel
+* Applying /etc/sysctl.d/99-cloudimg-ipv6.conf ...
+net.ipv6.conf.all.use_tempaddr = 0
+net.ipv6.conf.default.use_tempaddr = 0
+* Applying /etc/sysctl.d/99-sysctl.conf ...
+* Applying /etc/sysctl.d/k8s.conf ...
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+* Applying /etc/sysctl.conf ...
+vagrant@kubemaster:~$ sudo -i
+root@kubemaster:~# sudo apt-get remove docker docker-engine docker.io containerd runc
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+
+No apt package "docker", but there is a snap with that name.
+Try "snap install docker"
+
+E: Unable to locate package docker
+E: Unable to locate package docker-engine
+E: Unable to locate package docker.io
+E: Couldn't find any package by glob 'docker.io'
+E: Couldn't find any package by regex 'docker.io'
+E: Unable to locate package containerd
+E: Unable to locate package runc
+root@kubemaster:~# sudo apt-get update
+Hit:1 http://archive.ubuntu.com/ubuntu bionic InRelease
+Get:2 http://archive.ubuntu.com/ubuntu bionic-updates InRelease [88.7 kB]
+Get:3 http://archive.ubuntu.com/ubuntu bionic-backports InRelease [74.6 kB]
+Get:4 http://archive.ubuntu.com/ubuntu bionic/universe amd64 Packages [8570 kB]
+Get:5 http://security.ubuntu.com/ubuntu bionic-security InRelease [88.7 kB]
+Get:6 http://security.ubuntu.com/ubuntu bionic-security/main amd64 Packages [1813 kB]
+Get:7 http://security.ubuntu.com/ubuntu bionic-security/main Translation-en [333 kB]
+Get:8 http://security.ubuntu.com/ubuntu bionic-security/universe amd64 Packages [1132 kB]
+Get:9 http://security.ubuntu.com/ubuntu bionic-security/universe Translation-en [257 kB]
+Get:10 http://security.ubuntu.com/ubuntu bionic-security/multiverse amd64 Packages [24.8 kB]
+Get:11 http://security.ubuntu.com/ubuntu bionic-security/multiverse Translation-en [5072 B]
+Get:12 http://archive.ubuntu.com/ubuntu bionic/universe Translation-en [4941 kB]
+Get:13 http://archive.ubuntu.com/ubuntu bionic/multiverse amd64 Packages [151 kB]
+Get:14 http://archive.ubuntu.com/ubuntu bionic/multiverse Translation-en [108 kB]
+Get:15 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 Packages [2160 kB]
+Get:15 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 Packages [2160 kB]
+Get:16 http://archive.ubuntu.com/ubuntu bionic-updates/universe amd64 Packages [1740 kB]
+Get:17 http://archive.ubuntu.com/ubuntu bionic-updates/universe Translation-en [372 kB]
+Get:18 http://archive.ubuntu.com/ubuntu bionic-updates/multiverse amd64 Packages [30.5 kB]
+Get:19 http://archive.ubuntu.com/ubuntu bionic-updates/multiverse Translation-en [7120 B]
+Get:20 http://archive.ubuntu.com/ubuntu bionic-backports/main amd64 Packages [10.0 kB]
+Get:21 http://archive.ubuntu.com/ubuntu bionic-backports/main Translation-en [4764 B]
+Get:22 http://archive.ubuntu.com/ubuntu bionic-backports/universe amd64 Packages [10.3 kB]
+Get:23 http://archive.ubuntu.com/ubuntu bionic-backports/universe Translation-en [4588 B]
+Fetched 21.1 MB in 1min 12s (291 kB/s)
+Reading package lists... Done
+root@kubemaster:~#  sudo apt-get install \
+>     apt-transport-https \
+>     ca-certificates \
+>     curl \
+>     gnupg \
+>     lsb-release
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+lsb-release is already the newest version (9.20170808ubuntu1).
+lsb-release set to manually installed.
+ca-certificates is already the newest version (20210119~18.04.1).
+ca-certificates set to manually installed.
+gnupg is already the newest version (2.2.4-1ubuntu1.4).
+gnupg set to manually installed.
+The following additional packages will be installed:
+  libcurl4
+The following NEW packages will be installed:
+  apt-transport-https
+The following packages will be upgraded:
+  curl libcurl4
+2 upgraded, 1 newly installed, 0 to remove and 8 not upgraded.
+Need to get 382 kB of archives.
+After this operation, 154 kB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://archive.ubuntu.com/ubuntu bionic-updates/universe amd64 apt-transport-https all 1.6.14 [4348 B]
+Get:2 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 curl amd64 7.58.0-2ubuntu3.14 [159 kB]
+Get:3 http://archive.ubuntu.com/ubuntu bionic-updates/main amd64 libcurl4 amd64 7.58.0-2ubuntu3.14 [219 kB]
+Fetched 382 kB in 2s (227 kB/s)
+Selecting previously unselected package apt-transport-https.
+(Reading database ... 60031 files and directories currently installed.)
+Preparing to unpack .../apt-transport-https_1.6.14_all.deb ...
+Unpacking apt-transport-https (1.6.14) ...
+Preparing to unpack .../curl_7.58.0-2ubuntu3.14_amd64.deb ...
+Unpacking curl (7.58.0-2ubuntu3.14) over (7.58.0-2ubuntu3.13) ...
+Preparing to unpack .../libcurl4_7.58.0-2ubuntu3.14_amd64.deb ...
+Unpacking libcurl4:amd64 (7.58.0-2ubuntu3.14) over (7.58.0-2ubuntu3.13) ...
+Setting up apt-transport-https (1.6.14) ...
+Setting up libcurl4:amd64 (7.58.0-2ubuntu3.14) ...
+Setting up curl (7.58.0-2ubuntu3.14) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+Processing triggers for libc-bin (2.27-3ubuntu1.4) ...
+root@kubemaster:~#  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+root@kubemaster:~# echo \
+>   "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+>   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+root@kubemaster:~# sudo apt-get update
+Hit:1 http://archive.ubuntu.com/ubuntu bionic InRelease
+Hit:2 http://archive.ubuntu.com/ubuntu bionic-updates InRelease
+Hit:3 http://archive.ubuntu.com/ubuntu bionic-backports InRelease
+Hit:4 http://security.ubuntu.com/ubuntu bionic-security InRelease
+Get:5 https://download.docker.com/linux/ubuntu bionic InRelease [64.4 kB]
+Get:6 https://download.docker.com/linux/ubuntu bionic/stable amd64 Packages [19.1 kB]
+Fetched 83.6 kB in 12s (7214 B/s)
+Reading package lists... Done
+root@kubemaster:~# sudo apt-get install docker-ce docker-ce-cli containerd.io
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+  docker-ce-rootless-extras docker-scan-plugin libltdl7 pigz
+Suggested packages:
+  aufs-tools cgroupfs-mount | cgroup-lite
+Recommended packages:
+  slirp4netns
+The following NEW packages will be installed:
+  containerd.io docker-ce docker-ce-cli docker-ce-rootless-extras docker-scan-plugin libltdl7 pigz
+0 upgraded, 7 newly installed, 0 to remove and 8 not upgraded.
+Need to get 104 MB of archives.
+After this operation, 448 MB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://archive.ubuntu.com/ubuntu bionic/universe amd64 pigz amd64 2.4-1 [57.4 kB]
+Get:2 http://archive.ubuntu.com/ubuntu bionic/main amd64 libltdl7 amd64 2.4.6-2 [38.8 kB]
+Get:3 https://download.docker.com/linux/ubuntu bionic/stable amd64 containerd.io amd64 1.4.8-1 [24.7 MB]
+Get:4 https://download.docker.com/linux/ubuntu bionic/stable amd64 docker-ce-cli amd64 5:20.10.7~3-0~ubuntu-bionic [41.4 MB]
+Get:5 https://download.docker.com/linux/ubuntu bionic/stable amd64 docker-ce amd64 5:20.10.7~3-0~ubuntu-bionic [24.8 MB]
+Get:6 https://download.docker.com/linux/ubuntu bionic/stable amd64 docker-ce-rootless-extras amd64 5:20.10.7~3-0~ubuntu-bionic [9061 kB]
+Get:7 https://download.docker.com/linux/ubuntu bionic/stable amd64 docker-scan-plugin amd64 0.8.0~ubuntu-bionic [3888 kB]
+Fetched 104 MB in 6min 21s (273 kB/s)
+Selecting previously unselected package pigz.
+(Reading database ... 60035 files and directories currently installed.)
+Preparing to unpack .../0-pigz_2.4-1_amd64.deb ...
+Unpacking pigz (2.4-1) ...
+Selecting previously unselected package containerd.io.
+Preparing to unpack .../1-containerd.io_1.4.8-1_amd64.deb ...
+Unpacking containerd.io (1.4.8-1) ...
+Selecting previously unselected package docker-ce-cli.
+Preparing to unpack .../2-docker-ce-cli_5%3a20.10.7~3-0~ubuntu-bionic_amd64.deb ...
+Unpacking docker-ce-cli (5:20.10.7~3-0~ubuntu-bionic) ...
+Selecting previously unselected package docker-ce.
+Preparing to unpack .../3-docker-ce_5%3a20.10.7~3-0~ubuntu-bionic_amd64.deb ...
+Unpacking docker-ce (5:20.10.7~3-0~ubuntu-bionic) ...
+Selecting previously unselected package docker-ce-rootless-extras.
+Preparing to unpack .../4-docker-ce-rootless-extras_5%3a20.10.7~3-0~ubuntu-bionic_amd64.deb ...
+Unpacking docker-ce-rootless-extras (5:20.10.7~3-0~ubuntu-bionic) ...
+Selecting previously unselected package docker-scan-plugin.
+Preparing to unpack .../5-docker-scan-plugin_0.8.0~ubuntu-bionic_amd64.deb ...
+Unpacking docker-scan-plugin (0.8.0~ubuntu-bionic) ...
+Selecting previously unselected package libltdl7:amd64.
+Preparing to unpack .../6-libltdl7_2.4.6-2_amd64.deb ...
+Unpacking libltdl7:amd64 (2.4.6-2) ...
+Setting up containerd.io (1.4.8-1) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/containerd.service → /lib/systemd/system/containerd.service.
+Setting up docker-ce-rootless-extras (5:20.10.7~3-0~ubuntu-bionic) ...
+Setting up docker-scan-plugin (0.8.0~ubuntu-bionic) ...
+Setting up libltdl7:amd64 (2.4.6-2) ...
+Setting up docker-ce-cli (5:20.10.7~3-0~ubuntu-bionic) ...
+Setting up pigz (2.4-1) ...
+Setting up docker-ce (5:20.10.7~3-0~ubuntu-bionic) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/docker.service → /lib/systemd/system/docker.service.
+Created symlink /etc/systemd/system/sockets.target.wants/docker.socket → /lib/systemd/system/docker.socket.
+Processing triggers for libc-bin (2.27-3ubuntu1.4) ...
+Processing triggers for systemd (237-3ubuntu10.49) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+Processing triggers for ureadahead (0.100.0-21) ...
+root@kubemaster:~# systemctl status docker.service
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+   Active: active (running) since Fri 2021-07-23 14:23:36 UTC; 52s ago
+     Docs: https://docs.docker.com
+ Main PID: 3061 (dockerd)
+    Tasks: 10
+   CGroup: /system.slice/docker.service
+           └─3061 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+Jul 23 14:23:35 kubemaster dockerd[3061]: time="2021-07-23T14:23:35.082484560Z" level=info msg="ClientConn switching balancer to \"pick_first\"" module=grpc
+Jul 23 14:23:35 kubemaster dockerd[3061]: time="2021-07-23T14:23:35.162015515Z" level=warning msg="Your kernel does not support swap memory limit"
+Jul 23 14:23:35 kubemaster dockerd[3061]: time="2021-07-23T14:23:35.162048287Z" level=warning msg="Your kernel does not support CPU realtime scheduler"
+Jul 23 14:23:35 kubemaster dockerd[3061]: time="2021-07-23T14:23:35.162401352Z" level=info msg="Loading containers: start."
+Jul 23 14:23:35 kubemaster dockerd[3061]: time="2021-07-23T14:23:35.564167516Z" level=info msg="Default bridge (docker0) is assigned with an IP address 172.17.0.0/16. Daemon option --bip can be used to set a preferred IP address"
+Jul 23 14:23:36 kubemaster dockerd[3061]: time="2021-07-23T14:23:36.022056297Z" level=info msg="Loading containers: done."
+Jul 23 14:23:36 kubemaster dockerd[3061]: time="2021-07-23T14:23:36.091066070Z" level=info msg="Docker daemon" commit=b0f5bc3 graphdriver(s)=overlay2 version=20.10.7
+Jul 23 14:23:36 kubemaster dockerd[3061]: time="2021-07-23T14:23:36.091369954Z" level=info msg="Daemon has completed initialization"
+Jul 23 14:23:36 kubemaster systemd[1]: Started Docker Application Container Engine.
+Jul 23 14:23:36 kubemaster dockerd[3061]: time="2021-07-23T14:23:36.200783257Z" level=info msg="API listen on /var/run/docker.sock"
+root@kubemaster:~# docker images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+root@kubemaster:~# history
+    1  sudo apt-get remove docker docker-engine docker.io containerd runc
+    2  sudo apt-get update
+    3  echo   "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    4  sudo apt-get update
+    5  sudo apt-get install docker-ce docker-ce-cli containerd.io
+    6  systemctl status docker.service
+    7  docker images
+    8  history
+root@kubemaster:~# history
+    1  sudo apt-get remove docker docker-engine docker.io containerd runc
+    2  sudo apt-get update
+    3  echo   "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    4  sudo apt-get update
+    5  sudo apt-get install docker-ce docker-ce-cli containerd.io
+    6  systemctl status docker.service
+    7  docker images
+    8  history
+root@kubemaster:~# sudo apt-get update
+Hit:1 http://archive.ubuntu.com/ubuntu bionic InRelease curl
+Get:2 http://archive.ubuntu.com/ubuntu bionic-updates InRelease [88.7 kB]
+Get:3 http://archive.ubuntu.com/ubuntu bionic-backports InRelease [74.6 kB]
+Get:4 http://security.ubuntu.com/ubuntu bionic-security InRelease [88.7 kB]
+Hit:5 https://download.docker.com/linux/ubuntu bionic InRelease
+Fetched 252 kB in 11s (22.5 kB/s)
+Reading package lists... Done
+root@kubemaster:~# sudo apt-get install -y apt-transport-https ca-certificates curl
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+ca-certificates is already the newest version (20210119~18.04.1).
+curl is already the newest version (7.58.0-2ubuntu3.14).
+apt-transport-https is already the newest version (1.6.14).
+0 upgraded, 0 newly installed, 0 to remove and 8 not upgraded.
+root@kubemaster:~# sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+root@kubemaster:~# echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main
+root@kubemaster:~# sudo apt-get update
+ apt-get install -y kubelet kubeadm kubectl
+Hit:1 http://archive.ubuntu.com/ubuntu bionic InRelease
+Hit:2 http://archive.ubuntu.com/ubuntu bionic-updates InRelease
+Hit:3 http://archive.ubuntu.com/ubuntu bionic-backports InRelease
+Hit:4 http://security.ubuntu.com/ubuntu bionic-security InRelease
+Hit:5 https://download.docker.com/linux/ubuntu bionic InRelease
+Get:6 https://packages.cloud.google.com/apt kubernetes-xenial InRelease [9383 B]
+Get:7 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 Packages [48.2 kB]
+Fetched 57.6 kB in 23s (2505 B/s)
+Reading package lists... Done
+root@kubemaster:~# sudo apt-get install -y kubelet kubeadm kubectl
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+  conntrack cri-tools kubernetes-cni socat
+The following NEW packages will be installed:
+  conntrack cri-tools kubeadm kubectl kubelet kubernetes-cni socat
+0 upgraded, 7 newly installed, 0 to remove and 8 not upgraded.
+Need to get 70.5 MB of archives.
+After this operation, 309 MB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu bionic/main amd64 conntrack amd64 1:1.4.4+snapshot20161117-6ubuntu2 [30.6 kB]
+Get:2 http://archive.ubuntu.com/ubuntu bionic/main amd64 socat amd64 1.7.3.2-2ubuntu2 [342 kB]
+Get:3 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 cri-tools amd64 1.13.0-01 [8775 kB]
+Get:4 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 kubernetes-cni amd64 0.8.7-00 [25.0 MB]
+Get:5 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 kubelet amd64 1.21.3-00 [18.8 MB]
+Get:6 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 kubectl amd64 1.21.3-00 [8967 kB]
+Get:7 https://packages.cloud.google.com/apt kubernetes-xenial/main amd64 kubeadm amd64 1.21.3-00 [8549 kB]
+Fetched 70.5 MB in 9min 36s (122 kB/s)
+Selecting previously unselected package conntrack.
+(Reading database ... 60288 files and directories currently installed.)
+Preparing to unpack .../0-conntrack_1%3a1.4.4+snapshot20161117-6ubuntu2_amd64.deb ...
+Unpacking conntrack (1:1.4.4+snapshot20161117-6ubuntu2) ...
+Selecting previously unselected package cri-tools.
+Preparing to unpack .../1-cri-tools_1.13.0-01_amd64.deb ...
+Unpacking cri-tools (1.13.0-01) ...
+Selecting previously unselected package kubernetes-cni.
+Preparing to unpack .../2-kubernetes-cni_0.8.7-00_amd64.deb ...
+Unpacking kubernetes-cni (0.8.7-00) ...
+Selecting previously unselected package socat.
+Preparing to unpack .../3-socat_1.7.3.2-2ubuntu2_amd64.deb ...
+Unpacking socat (1.7.3.2-2ubuntu2) ...
+Selecting previously unselected package kubelet.
+Preparing to unpack .../4-kubelet_1.21.3-00_amd64.deb ...
+Unpacking kubelet (1.21.3-00) ...
+Selecting previously unselected package kubectl.
+Preparing to unpack .../5-kubectl_1.21.3-00_amd64.deb ...
+Unpacking kubectl (1.21.3-00) ...
+Selecting previously unselected package kubeadm.
+Preparing to unpack .../6-kubeadm_1.21.3-00_amd64.deb ...
+Unpacking kubeadm (1.21.3-00) ...
+Setting up conntrack (1:1.4.4+snapshot20161117-6ubuntu2) ...
+Setting up kubernetes-cni (0.8.7-00) ...
+Setting up cri-tools (1.13.0-01) ...
+Setting up socat (1.7.3.2-2ubuntu2) ...
+Setting up kubelet (1.21.3-00) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/kubelet.service → /lib/systemd/system/kubelet.service.
+Setting up kubectl (1.21.3-00) ...
+Setting up kubeadm (1.21.3-00) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+root@kubemaster:~# ifconfig -a
+docker0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+        inet 172.17.0.1  netmask 255.255.0.0  broadcast 172.17.255.255
+        ether 02:42:93:e8:65:51  txqueuelen 0  (Ethernet)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+enp0s3: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 10.0.2.15  netmask 255.255.255.0  broadcast 10.0.2.255
+        inet6 fe80::2a:e1ff:feea:7072  prefixlen 64  scopeid 0x20<link>
+        ether 02:2a:e1:ea:70:72  txqueuelen 1000  (Ethernet)
+        RX packets 160176  bytes 207471827 (207.4 MB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 53671  bytes 3440656 (3.4 MB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+enp0s8: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.56.2  netmask 255.255.255.0  broadcast 192.168.56.255
+        inet6 fe80::a00:27ff:fea3:1c4  prefixlen 64  scopeid 0x20<link>
+        ether 08:00:27:a3:01:c4  txqueuelen 1000  (Ethernet)
+        RX packets 44  bytes 7541 (7.5 KB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 20  bytes 1536 (1.5 KB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 174  bytes 16327 (16.3 KB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 174  bytes 16327 (16.3 KB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+root@kubemaster:~# ifconfig enp0s8
+enp0s8: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.56.2  netmask 255.255.255.0  broadcast 192.168.56.255
+        inet6 fe80::a00:27ff:fea3:1c4  prefixlen 64  scopeid 0x20<link>
+        ether 08:00:27:a3:01:c4  txqueuelen 1000  (Ethernet)
+        RX packets 44  bytes 7541 (7.5 KB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 20  bytes 1536 (1.5 KB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+root@kubemaster:~# kubeadm init --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address 192.168.56.2
+[init] Using Kubernetes version: v1.21.3
+[preflight] Running pre-flight checks
+        [WARNING IsDockerSystemdCheck]: detected "cgroupfs" as the Docker cgroup driver. The recommended driver is "systemd". Please follow the guide at https://kubernetes.io/docs/setup/cri/
+[preflight] Pulling images required for setting up a Kubernetes cluster
+[preflight] This might take a minute or two, depending on the speed of your internet connection
+[preflight] You can also perform this action in beforehand using 'kubeadm config images pull'
+
+[certs] Using certificateDir folder "/etc/kubernetes/pki"
+[certs] Generating "ca" certificate and key
+[certs] Generating "apiserver" certificate and key
+[certs] apiserver serving cert is signed for DNS names [kubemaster kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 192.168.56.2]
+[certs] Generating "apiserver-kubelet-client" certificate and key
+[certs] Generating "front-proxy-ca" certificate and key
+[certs] Generating "front-proxy-client" certificate and key
+[certs] Generating "etcd/ca" certificate and key
+[certs] Generating "etcd/server" certificate and key
+[certs] etcd/server serving cert is signed for DNS names [kubemaster localhost] and IPs [192.168.56.2 127.0.0.1 ::1]
+[certs] Generating "etcd/peer" certificate and key
+[certs] etcd/peer serving cert is signed for DNS names [kubemaster localhost] and IPs [192.168.56.2 127.0.0.1 ::1]
+[certs] Generating "etcd/healthcheck-client" certificate and key
+[certs] Generating "apiserver-etcd-client" certificate and key
+[certs] Generating "sa" key and public key
+[kubeconfig] Using kubeconfig folder "/etc/kubernetes"
+[kubeconfig] Writing "admin.conf" kubeconfig file
+[kubeconfig] Writing "kubelet.conf" kubeconfig file
+[kubeconfig] Writing "controller-manager.conf" kubeconfig file
+[kubeconfig] Writing "scheduler.conf" kubeconfig file
+[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[kubelet-start] Starting the kubelet
+[control-plane] Using manifest folder "/etc/kubernetes/manifests"
+[control-plane] Creating static Pod manifest for "kube-apiserver"
+[control-plane] Creating static Pod manifest for "kube-controller-manager"
+[control-plane] Creating static Pod manifest for "kube-scheduler"
+[etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests"
+[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
+[apiclient] All control plane components are healthy after 23.004600 seconds
+[upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+[kubelet] Creating a ConfigMap "kubelet-config-1.21" in namespace kube-system with the configuration for the kubelets in the cluster
+[upload-certs] Skipping phase. Please see --upload-certs
+[mark-control-plane] Marking the node kubemaster as control-plane by adding the labels: [node-role.kubernetes.io/master(deprecated) node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
+[mark-control-plane] Marking the node kubemaster as control-plane by adding the taints [node-role.kubernetes.io/master:NoSchedule]
+[bootstrap-token] Using token: iiz97p.98eppbg9u569trq0
+[bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
+[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to get nodes
+[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+[bootstrap-token] configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+[bootstrap-token] configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+[bootstrap-token] Creating the "cluster-info" ConfigMap in the "kube-public" namespace
+[kubelet-finalize] Updating "/etc/kubernetes/kubelet.conf" to point to a rotatable kubelet client certificate and key
+[addons] Applied essential addon: CoreDNS
+[addons] Applied essential addon: kube-proxy
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.56.2:6443 --token iiz97p.98eppbg9u569trq0 \
+        --discovery-token-ca-cert-hash sha256:96aec4e1bcda970ccc313ac1a646db0c12c389a77eca10a66220df0dca9f42dc
+root@kubemaster:~#
+root@kubemaster:~#
